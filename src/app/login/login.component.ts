@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AuthService } from '../services/auth/auth.service';
+import { first } from 'rxjs/operators';
+import { AlertService } from '../services/alert/alert.service';
 
-import { AuthService } from './../auth/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -11,15 +14,19 @@ import { AuthService } from './../auth/auth.service';
 export class LoginComponent implements OnInit {
   form: FormGroup;
   private formSubmitAttempt: boolean;
+  loading = false;
+
 
   constructor(
     private fb: FormBuilder,
-    private authService: AuthService
+    private router: Router,
+    private authService: AuthService,
+    private alertService: AlertService
   ) {}
 
   ngOnInit() {
     this.form = this.fb.group({
-      userName: ['', Validators.required],
+      email: ['', Validators.required],
       password: ['', Validators.required]
     });
   }
@@ -32,9 +39,26 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.form.valid) {
-      this.authService.login(this.form.value);
+     this.formSubmitAttempt = true;
+
+    // stop here if form is invalid
+    if (this.form.invalid) {
+        return;
     }
-    this.formSubmitAttempt = true;
-  }
+
+     this.loading = true;
+     console.log(this.form.value);
+     this.authService.login(this.form.value.email, this.form.value.password)
+         .pipe(first())
+         .subscribe(
+            data => {
+                this.alertService.success('Login successful', true);
+                this.router.navigate(['/yoda/home']);
+            },
+            error => {
+                this.alertService.error(error.error.message);
+                this.loading = false;
+                this.router.navigate(['/yoda/home']);
+            });
+      }
 }

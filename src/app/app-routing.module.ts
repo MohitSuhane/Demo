@@ -1,18 +1,16 @@
 import { NgModule } from '@angular/core';
 import {  RouterModule, Routes } from '@angular/router';
 
-import { AuthGuard } from './auth/auth.guard';
-import { LoginComponent } from './login/login.component';
+import { AuthGuard } from './services/auth/auth.guard';
 import { HeaderComponent } from './header/header.component';
-import { RegisterComponent } from './register/register.component';
+import { YodaComponent } from './yoda/yoda.component';
 import { HomeComponent } from './home/home.component';
 
 
 const routes: Routes = [
-  { path: '', component: HomeComponent, canActivate: [AuthGuard] },
-  { path: 'register', component: RegisterComponent },
-  { path: 'login', component: LoginComponent },
-  { path: '**', redirectTo: ''}
+  { path: 'yoda/home', component: HomeComponent, canActivate: [AuthGuard] },
+  { path: 'yoda', component: YodaComponent},
+  { path: '**', redirectTo: 'yoda'}
 ];
 
 @NgModule({

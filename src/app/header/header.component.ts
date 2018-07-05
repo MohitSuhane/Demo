@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from './../auth/auth.service';
+import { AuthService } from '../services/auth/auth.service';
+import { MatDialog, MatDialogConfig } from "@angular/material";
+import { LoginSignUpDialogComponent } from '../dialog/logInSignUp.component';
+
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -8,10 +11,27 @@ import { AuthService } from './../auth/auth.service';
 export class HeaderComponent implements OnInit {
   userName: string;
 
-   constructor(private authenticationService: AuthService) {}
+  constructor(private authenticationService: AuthService, private dialog: MatDialog) { }
 
   ngOnInit() {
-     this.authenticationService.getLoggedInName.subscribe(name => this.userName = name);
+    this.authenticationService.getLoggedInName.subscribe(name => this.userName = name);
+  }
+
+  openDialog() {
+    const dialogConfig = new MatDialogConfig();
+
+    dialogConfig.data = {
+      id: 1,
+      title: 'Angular For Beginners'
+    };
+
+    dialogConfig.width = '700px';
+    dialogConfig.height = '550px';
+    const dialogRef = this.dialog.open(LoginSignUpDialogComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(
+      data => console.log("Dialog output:", data)
+    );
   }
 
   toggle = true;
